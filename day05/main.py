@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
+"""
+row and col are binary numbers. (row * 8 + col) is essentially (row << 3 | col),
+meaning they are already binary encoded.
+Simply replace FL and BR with 0 and 1 and parse the whole number.
+"""
+table = str.maketrans("FBLR", "0101")
+
 
 def get_id(seat):
-  row = int(seat[:7].replace('F', '0').replace('B', '1'), 2)
-  col = int(seat[7:].replace('L', '0').replace('R', '1'), 2)
-  return row * 8 + col
+  return int(seat.translate(table), 2)
 
 
 def solve_part1(ids):
