@@ -13,7 +13,7 @@ def get_id(seat):
 
 
 def solve_part1(ids):
-    return max(ids)
+  return max(ids)
 
 
 def solve_part2(ids):
