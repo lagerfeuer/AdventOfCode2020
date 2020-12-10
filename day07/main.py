@@ -60,7 +60,7 @@ def read(file='input.txt'):
 
 
 def main():
-  (rules, lookup_tbl) = read(sys.argv[1] if len(sys.argv) > 1 else 'input.txt')
+  (rules, lookup_tbl) = read()
   print("Part 1:", solve_part1(lookup_tbl))
   print("Part 2:", solve_part2(rules))
 
