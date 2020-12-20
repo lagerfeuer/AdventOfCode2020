@@ -1,53 +1,41 @@
 #!/usr/bin/env python3
 
-from pyformlang.cfg import Production, Terminal, Variable, CFG
+from lark import Lark
+
+import re
 
 
-def solve(cfg, messages):
-  return [cfg.contains(msg) for msg in messages].count(True)
+def solve(l, messages):
+  def _parse(l, msg):
+    try:
+      l.parse(msg)
+      return True
+    except Exception as e:
+      # print(e)
+      return False
+
+  return [_parse(l, msg) for msg in messages].count(True)
 
 
-def grammar(rules):
-  terminals = set()
-  variables = set()
-  productions = set()
-
-  for (k, v) in rules.items():
-    variables.add(Variable(k))
-    if isinstance(v, str):
-      terminals.add(Terminal(v))
-      productions.add(Production(Variable(k), [Terminal(v)]))
-    else:
-      for e in v:
-        productions.add(Production(
-            Variable(k), [Variable(x) for x in e]))
-
-  cfg = CFG(variables, terminals, Variable('0'), productions)
-  return cfg
-
-
-def read(file='input.txt'):
+def read(file='input.txt', part2=False):
   with open(file, 'r') as f:
-    (rules, messages) = [[l.strip() for l in part.splitlines()]
-                         for part in f.read().split('\n\n')]
+    (rules, messages) = f.read().split('\n\n')
+  messages = [l.strip() for l in messages.splitlines()]
 
-  rules = {k: v[1:-1] if v.startswith('"') else [[e
-                                                  for e in opts.split(' ')]
-                                                 for opts in v.split(' | ')]
-           for line in rules
-           for (k, v) in [line.split(': ')]}
+  if part2:
+    rules = re.sub(r'8: 42', r'8: 42 | 42 8', rules)
+    rules = re.sub(r'11: 42 31', r'11: 42 31 | 42 11 31', rules)
 
-  return rules, messages
+  grammar = re.sub(r'(\d+)', r'r\1', rules, flags=re.MULTILINE)
+  l = Lark(grammar, start='r0')
+  return l, messages
 
 
 def main():
-  rules, messages = read()
-  extended = rules | {
-      '8': [r.split() for r in '42 | 42 8'.split()],
-      '11': [r.split() for r in '42 31 | 42 11 31'.split(' | ')]
-  }
-  print("Part 1:", solve(grammar(rules), messages))
-  print("Part 2:", solve(grammar(extended), messages))
+  l, messages = read()
+  print("Part 1:", solve(l, messages))
+  l, messages = read(part2=True)
+  print("Part 2:", solve(l, messages))
 
 
 if __name__ == "__main__":
