@@ -3,6 +3,7 @@
 from collections import namedtuple, defaultdict
 from functools import reduce
 from operator import mul
+from math import sqrt
 
 ImageTile = namedtuple('ImageTile', 'data borders')
 
@@ -33,6 +34,8 @@ def construct_image(data):
   connected = find_connected(data)
   corners = [k for (k,v) in connected.items() if len(v) == 2]
   to_place = {data.keys()}
+  n = int(sqrt(len(data)))
+  result = [[-1 for _ in range(n)] for _ in range(n)]
 
   start = corners[0]
   tmp = connected[start]
