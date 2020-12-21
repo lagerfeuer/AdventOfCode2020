@@ -24,6 +24,7 @@ def find_connected(data):
     for tid2, t2 in data.items():
       if tid1 == tid2:
         continue
+      # TODO: rotate t2 instead of just reversing borders, after this all tiles will have the correct rotation
       if any(t1b == t2b for t1b in t1.borders for t2b in t2.borders + [b[::-1] for b in t2.borders]):
         connected[tid1].add(tid2)
         connected[tid2].add(tid1)
@@ -33,7 +34,7 @@ def find_connected(data):
 def construct_image(data):
   connected = find_connected(data)
   corners = [k for (k,v) in connected.items() if len(v) == 2]
-  to_place = {data.keys()}
+  to_place = set(data.keys())
   n = int(sqrt(len(data)))
   result = [[-1 for _ in range(n)] for _ in range(n)]
 
